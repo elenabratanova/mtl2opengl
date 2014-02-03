@@ -438,6 +438,15 @@ sub loadDataMTL
 	    	@tokens= split(' ', $line);
 	    	$mValues[$numMaterials]->[9] = sprintf "%.3f", $tokens[1];
 	  	}   
+
+		#texture name
+	  	if ($line =~ /map_Kd\s+.*/)
+	  	{	
+	    	@tokens= split(' ', $line);
+		@paths= split('/', $tokens[1]);
+	    	$mTextures[$numMaterials] = $paths[-1];
+	  	}   
+
 	}
 	close INFILEMTL;
 	$numMaterials++;
@@ -799,6 +808,14 @@ sub writeOutputMTL
 		print OUTFILEMTL "$nsE,\n";
 	}
 	print OUTFILEMTL "};\n\n";
-	    	
+
+	# write texture names
+	print OUTFILEMTL "const char * ".$objectMTL."TextureNames [$numMaterials] = {\n";
+	for($i = 0; $i < $numMaterials; $i++)
+	{
+		print OUTFILEMTL "\"$mTextures[$i]\",\n";
+	}
+	print OUTFILEMTL "};\n\n";
+
 	close OUTFILEMTL;
 }
